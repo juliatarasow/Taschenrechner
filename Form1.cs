@@ -12,127 +12,91 @@ namespace Taschenrechner
 {
     public partial class Form1 : Form
     {
-        TextBox _inputTextBox;
-        string inputNumber = " ";
-        decimal outputNumber = 0m;
-        string calc = " ";
+        decimal firstValue = 0m;
+        decimal resultValue = 0m;
+        string operationPerformed = "";
+        bool isOperationPerformed = false;
+        
 
         public Form1()
         {
             InitializeComponent();
-
-            inputNumber = inputTextBox.Text;
-            if (decimal.TryParse(inputNumber, out outputNumber))
+        }
+//------Zahl oder . wird geklickt
+        private void button_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender; //castet das sender-Objekt(Button, der geklickt wurde) zu einem Button
+                                            //->wir haben Zugriff auf die Eigenscheaften des Buttons
+            if (button.Text == "ce")
             {
-                outputNumber = decimal.Parse(inputNumber);
-            }
+                inputTextBox.Text = "";
+                firstValue = 0m;
+                operationPerformed = "";
+                isOperationPerformed = false;
+            } 
             else
             {
-                MessageBox.Show("Bitte eine gültige Zahl eingeben.", "Ungültige Eingabe", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+                if (isOperationPerformed)
+                {
+                    //wenn Operation ausgewählt wurde
+                    inputTextBox.Text = "";
+                    isOperationPerformed = false;
+                }
+                //keine doppelten Dezimalpunkte hinzufügen
+                if (button.Text == "." && inputTextBox.Text.Contains("."))
+                {
+                    return;
+                }
+
+                if (inputTextBox.Text == "0")
+                {
+                    inputTextBox.Text = button.Text;
+                }
+                else
+                {
+                    inputTextBox.Text += button.Text;
+                }
+            }           
+        }  
+  
+//------Rechenoperator wird geklickt
+        private void operand_Click(object sender, EventArgs e) 
+        {
+            Button button = (Button)sender;
+
+            firstValue = decimal.Parse(inputTextBox.Text);
+            operationPerformed = button.Text;
+            isOperationPerformed |= true;            
         }
 
+//------Gleich-Taste wird geklickt
         private void equals_Click(object sender, EventArgs e)
         {
-           switch (calc)
-            {
-                case "/":
-                    inputTextBox.Text = (decimal.Parse(inputTextBox.Text) / decimal.Parse(inputTextBox.Text)).ToString();
-                    break;
-                case "*":
+            decimal secondValue = decimal.Parse(inputTextBox.Text);
 
+            switch (operationPerformed)
+            {
+                case "+":
+                    resultValue = firstValue + secondValue;
                     break;
                 case "-":
-
+                    resultValue = firstValue - secondValue;
                     break;
-                case "+":
-
+                case "*":
+                    resultValue = firstValue * secondValue;
+                    break;
+                case "/":
+                    resultValue = firstValue / secondValue;
                     break;
                 default:
-                    break;
+                    return;
             }
 
-            
+            inputTextBox.Text = resultValue.ToString();
+            firstValue = resultValue;
+            operationPerformed = "";
         }
 
-        private void seven_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "7";
-        }
 
-        private void eight_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "8";
-        }
-
-        private void nine_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "9";
-        }
-
-        private void four_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "4";
-        }
-
-        private void five_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "5";
-        }
-
-        private void six_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "6";
-        }
-
-        private void one_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "1";
-        }
-
-        private void two_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "2";
-        }
-
-        private void three_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "3";
-        }
-
-        private void zero_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += "0";  
-        }
-
-        private void dott_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Text += ".";
-        }
-                
-        private void devide_Click(object sender, EventArgs e)
-        {
-            calc = "/";
-        }
-
-        private void multiply_Click(object sender, EventArgs e)
-        {
-            calc = "*";
-        }
-
-        private void minus_Click(object sender, EventArgs e)
-        {
-            calc = "-";
-        }
-
-        private void plus_Click(object sender, EventArgs e)
-        {
-            calc = "+";
-        }
-
-        private void clear_Click(object sender, EventArgs e)
-        {
-            inputTextBox.Clear();
-        }
     }
 }
