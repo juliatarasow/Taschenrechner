@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,37 +22,40 @@ namespace Taschenrechner
         public Form1()
         {
             InitializeComponent();
+            inputTextBox.Text = "0";
         }
-//------Zahl oder . wird geklickt
+
+        //------Zahl oder . wird geklickt
         private void button_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
 
             if (button == null) return;
 
-            if (button.Text == "ce")
-            {
-                inputTextBox.Text = "0";
-                firstValue = 0m;
-                resultValue = 0m;
-                operationPerformed = "";
-                isOperationPerformed = false;
-            }
-
+            //Wenn nach einer Operatoin eine neue Zahl eingegeben wird, fangen wir von vorne an 
             if (isOperationPerformed)
             {
-                //wenn Operation ausgewählt wurde
-                inputTextBox.Text = "";
+                inputTextBox.Text = "0";
                 isOperationPerformed = false;
             }
 
-            //keine doppelten Dezimalpunkte hinzufügen
-            if (button.Text == "." && inputTextBox.Text.Contains("."))
+            if (inputTextBox.Text.Contains("."))
             {
-                return;
+                if (button.Text == ".")
+                {
+                    return;
+                }
+                else
+                {
+                    inputTextBox.Text += button.Text;
+                }
+
+                isOperationPerformed = false;
+
             }
 
-            if (inputTextBox.Text == "0" && button.Text != ".")
+            //Wenn die aktuelle Zahl "0" ist, ersetze sie (außer wenn "." eingegeben wird)
+            if (inputTextBox.Text == "0")
             {
                 inputTextBox.Text = button.Text;
             }
@@ -59,48 +63,32 @@ namespace Taschenrechner
             {
                 inputTextBox.Text += button.Text;
             }
+
+            if (button.Text == "ce")
+            {
+                inputTextBox.Text = "0";
+                isOperationPerformed = false;
+                firstValue = 0m;
+                resultValue = 0m;
+                operationPerformed = "";
+            }
         }
 
-//------Rechenoperator wird geklickt
+        //------Rechenoperator wird geklickt
         private void operand_Click(object sender, EventArgs e)
         {
-            Button button = sender as Button;
-
+            Button button = (sender as Button);
             if (button == null) return;
 
-            decimal secondValue;
-
-            // es wird versucht die Eingabe in eine Zahl umzuwandeln und Fehler wird mit Fehlermeldung abgefangen
-            try
-            {
-                secondValue = decimal.Parse(inputTextBox.Text);
-            }
-            catch
-            {
-                MessageBox.Show("Ungültige Eingabe", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            operationPerformed = button.Text;
             isOperationPerformed = true;
+            firstValue = decimal.Parse(inputTextBox.Text);
+            operationPerformed = button.Text;
         }
 
-//------Gleich-Taste wird geklickt
+        //------Gleich-Taste wird geklickt
         private void equals_Click(object sender, EventArgs e)
         {
-            decimal secondValue;
-
-            try
-            {
-                secondValue = decimal.Parse(inputTextBox.Text);
-            }
-            catch 
-            {
-                MessageBox.Show("Ungültige Eingabe", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-               
-           
+            decimal secondValue = decimal.Parse(inputTextBox.Text);
 
             switch (operationPerformed)
             {
@@ -114,21 +102,12 @@ namespace Taschenrechner
                     resultValue = firstValue * secondValue;
                     break;
                 case "/":
-                    if (secondValue == 0)
-                    {
-                        MessageBox.Show("Division durch 0 ist nicht erlaubt!", "Fehler");
-                        return;
-                    }
                     resultValue = firstValue / secondValue;
                     break;
-                default:
-                    return;
             }
 
             inputTextBox.Text = resultValue.ToString();
-            firstValue = resultValue;
-            operationPerformed = "";
-            isOperationPerformed = false;
+            isOperationPerformed = true;
         }
     }
 }
