@@ -108,7 +108,7 @@
             this.dott.Name = "dott";
             this.dott.Size = new System.Drawing.Size(41, 38);
             this.dott.TabIndex = 8;
-            this.dott.Text = ".";
+            this.dott.Text = ",";
             this.dott.UseVisualStyleBackColor = true;
             this.dott.Click += new System.EventHandler(this.button_Click);
             // 

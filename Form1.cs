@@ -39,23 +39,13 @@ namespace Taschenrechner
                 isOperationPerformed = false;
             }
 
-            if (inputTextBox.Text.Contains("."))
+            if(button.Text == "," && inputTextBox.Text.Contains(","))
             {
-                if (button.Text == ".")
-                {
-                    return;
-                }
-                else
-                {
-                    inputTextBox.Text += button.Text;
-                }
-
-                isOperationPerformed = false;
-
+                return;
             }
 
             //Wenn die aktuelle Zahl "0" ist, ersetze sie (außer wenn "." eingegeben wird)
-            if (inputTextBox.Text == "0")
+            if (inputTextBox.Text == "0" && button.Text != ",")
             {
                 inputTextBox.Text = button.Text;
             }
@@ -102,12 +92,21 @@ namespace Taschenrechner
                     resultValue = firstValue * secondValue;
                     break;
                 case "/":
-                    resultValue = firstValue / secondValue;
+                    if(secondValue != 0)
+                    {
+                        resultValue = firstValue / secondValue;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Division durch 0 ist nicht möglich!");
+                        return;
+                    }
                     break;
             }
 
             inputTextBox.Text = resultValue.ToString();
             isOperationPerformed = true;
+            operationPerformed = "";
         }
     }
 }
